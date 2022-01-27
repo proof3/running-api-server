@@ -1,12 +1,27 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import { useState } from 'react'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
+import { useState } from 'react';
+import Chart from '../components/Chart';
 
 export default function Home() {
   const [data, setdata] = useState([]);
   const [pace, setpace] = useState('');
   const [cadence, setcadence] = useState('');
   const [distance, setdistance] = useState('');
+
+  function getdata() {
+    return data;
+  }
+
+  //let dataplot;
+  //console.log(data);
+  // if (data.length > 0) {
+  //   dataplot = ;
+  // }
+  // else {
+  //   dataplot = <div></div>;
+  // }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -31,65 +46,23 @@ export default function Home() {
             <input type="text" name="distance" value={distance} onChange={(e) => {setdistance(e.target.value)}}/>
           </label>
           <input type="submit" value="Submit" onClick={ async () => {
-            console.log("Submit Clicked");
             const response = await fetch('api/log_data', {
               method: 'POST', 
-              body: JSON.stringify({ndata: {pace: pace, cadence: cadence, distance: distance}}), 
+              body: JSON.stringify({pace: pace, cadence: cadence, distance: distance}), 
               headers: {
                 'Content-Type': 'application/json'
               },
             });
             const ndata = await response.json();
+            //console.log(ndata);
             setdata(ndata);
             setpace('');
             setcadence('');
             setdistance('');
-            console.log(ndata);
             }}/>
         </div>
+        <div><Chart chartData={data} num_data={data.length}/></div>
       </main>
     </div>
   )
 }
-
-
-
-// const paceChart = new Chart(ctx, {
-//   type: 'line',
-//   data: {
-//     labels: ['0', '2', '4', '6', '8', '10', '12', '14', '16', '18', '20'],
-//     datasets: [{
-//       label: 'Pace',
-//       data: [req.body.pace],
-//       fill: false,
-//       borderColor: 'rgb(75, 192, 192)',
-//       tension: 0.1
-//     }]
-//   }
-// });
-// const cadenceChart = new Chart(ctx, {
-//   type: 'line',
-//   data: {
-//     labels: ['110', '120', '130', '140', '150', '160', '170', '180', '190', '200'],
-//     datasets: [{
-//       label: 'Cadence',
-//       data: [req.body.cadence],
-//       fill: false,
-//       borderColor: 'rgb(238, 75, 43)',
-//       tension: 0.1
-//     }]
-//   }
-// });
-// const distanceChart = new Chart(ctx, {
-//   type: 'line',
-//   data: {
-//     labels: ['1', '120', '130', '140', '150', '160', '170', '180', '190', '200'],
-//     datasets: [{
-//       label: '#Distance',
-//       data: [req.body.distance],
-//       fill: false,
-//       borderColor: 'rgb(144, 238, 144)',
-//       tension: 0.1
-//     }]
-//   }
-// });
